@@ -136,6 +136,9 @@ fews.download.cpc.noaa <- function(GalParams, nbfile = 3, GUI = TRUE, verbose = 
     return(ret)
 }
 
+## RFEv2 dekad Africa
+# https://ftp.cpc.ncep.noaa.gov/fews/newalgo_est_dekad/
+
 fews.coverage.cpc.noaa <- function(GalParams){
     rfename <- switch(GalParams$rfe.src,
                       "arc2-af" = "FEWS-NET ARC2",

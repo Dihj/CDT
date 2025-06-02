@@ -71,5 +71,6 @@ startCDT <- function(wd = NA, lang = NA){
     .cdtEnv$tcl$task_openFiles$openFiles <- ""
     Listen_OpenFiles_Change()
 
+    startHelpHttpdServer()
     invisible()
 }
