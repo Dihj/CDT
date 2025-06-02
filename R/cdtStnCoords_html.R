@@ -1,3 +1,12 @@
+StnChkCoordsHtmlParse <- function(html, replace_text){
+    for(j in seq_along(replace_text)){
+        txt <- names(replace_text[j])
+        pattern <- paste0("<<<< *", txt, " *>>>>")
+        html <- gsub(pattern, replace_text[[j]], html)
+    }
+
+    return(html)
+}
 
 StnChkCoordsHtml <- function(){
 tmp <- '<!DOCTYPE html>
@@ -5,10 +14,10 @@ tmp <- '<!DOCTYPE html>
 
 <head>
     <title> Stations coordinates </title>
-    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" />
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
-    <!-- <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY" async defer></script> -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <!-- <script src="https://maps.googleapis.com/maps/api/js?key=\'<<<< googleAPIKey >>>>\'" async defer></script> -->
     <style>
     html,
     body {
@@ -19,6 +28,12 @@ tmp <- '<!DOCTYPE html>
         width: 100%;
         height: 95%;
         border: 1px solid #AAA;
+    }
+    #maptype{
+        width: 200px;
+    }
+    .leaflet-attribution-flag {
+        display: none !important;
     }
     </style>
 </head>
@@ -40,10 +55,10 @@ tmp <- '<!DOCTYPE html>
     </div>
     <div id="mapAWSCoords"></div>
     <script>
-    var serverPath = "http://127.0.0.1:25782/custom/CDT/";
+    var serverPath = "<<<< serverPath >>>>";
     $(document).ready(function() {
         var mymap = L.map("mapAWSCoords", {
-            center: [-2.01922938104402, 29.8377173354088],
+            center: [<<<<lat_c>>>>, <<<< lon_c>>>>],
             minZoom: 2,
             zoom: 8
         });
@@ -99,7 +114,7 @@ tmp <- '<!DOCTYPE html>
         };
         $.getJSON(serverPath + "station_coords.json", function(json) {
             $.each(json, function() {
-                var contenu = "";
+                var contenu = <<<< contenu >>>>;
                 if (typeof this.LonX !== "undefined") {
                     L.marker([this.LatX, this.LonX], { icon: icons[this.StatusX].icon }).bindPopup(contenu).addTo(mymap);
                 }
@@ -136,9 +151,11 @@ tmp <- '<!DOCTYPE html>
                 }
                 mytile = L.tileLayer("https://api.mapbox.com/styles/v1/mapbox/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
                     attribution: \'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery &copy; <a href="https://www.mapbox.com/">Mapbox</a>\',
+                    tileSize: 512,
+                    zoomOffset: -1,
                     maxZoom: 23,
                     id: mapid,
-                    accessToken: "pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4M29iazA2Z2gycXA4N2pmbDZmangifQ.-g_vE53SD2WrJ6tFX7QHmA"
+                    accessToken: "pk.eyJ1IjoicmlqYWYiLCJhIjoiY2xoOGJ5djZvMDc1NTNlcXk5bmRyMzVuMSJ9.WtjNPGY0JwLwbkacp8H8UQ"
                 }).addTo(mymap);
             }
             window.mytile = mytile;

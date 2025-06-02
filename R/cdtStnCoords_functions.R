@@ -33,46 +33,45 @@ StnChkCoordsFormatHtml <- function(){
     nom <- nom[!nom %in% c('LonX', 'LatX', 'StatusX', 'idx')]
     contenu <- lapply(nom, function(x) paste0("'<b>", x, " : </b>' + this.", x, " + '<br>'"))
     contenu <- do.call(paste, c(contenu, sep = " + "))
-
-    html.f <- StnChkCoordsHtml()
-    html.f[44] <- paste0("center: [", lat.c, ", ", lon.c, "],")
-    html.f[100] <- paste0("var contenu = ", contenu, ";")
-    if(!is.null(.cdtData$Config$Google.Maps.API.key)){
-        html.f[9] <- paste0('<script src="https://maps.googleapis.com/maps/api/js?key=',
-                              .cdtData$Config$Google.Maps.API.key,
-                              '" async defer></script>')
+    googleAPIKey <- .cdtData$Config$Google.Maps.API.key
+    if(!is.null(googleAPIKey)){
+        if(length(googleAPIKey) == 0 || googleAPIKey == ""){
+            googleAPIKey <- "YOUR_API_KEY"
+        }
+    }else{
+        googleAPIKey <- "YOUR_API_KEY"
     }
 
-    return(html.f)
-}
+    to_repl <- list(serverPath = .cdtEnv$cdtUrl,
+                    lon_c = lon.c,
+                    lat_c = lat.c,
+                    contenu = contenu,
+                    googleAPIKey = googleAPIKey)
 
-StnChkCoordsProxyPass <- function(path, query, ...){
-    path <- gsub("^/custom/CDT/", "", path)
-    tmpfile <- sprintf("%s%s%s", tempdir(), .Platform$file.sep, path)
-    list(file = tmpfile, "content-type" = "text/html", "status code" = 200L)
+    html <- StnChkCoordsHtml()
+    html <- StnChkCoordsHtmlParse(html, to_repl)
+
+    return(html)
 }
 
 StnChkCoordsBrowse <- function(html.page){
-    options(help_type = "html")
-    if(!is.HelpServerRunning()) tools::startDynamicHelp()
-    env <- get(".httpd.handlers.env", asNamespace("tools"))
-    env[["CDT"]] <- StnChkCoordsProxyPass
-    port <- ifelse(R.version['svn rev'] < 67550 | getRversion() < "3.2.0", 
-                   get("httpdPort", envir = environment(tools::startDynamicHelp)),
-                   tools::startDynamicHelp(NA))
-    html.page[41] <- sprintf('var serverPath = "http://127.0.0.1:%s/custom/CDT/";', port)
-    tmpfile <- file.path(tempdir(), "StationsCoordinates.html")
+    html.file <- "StationsCoordinates.html"
+    tmpdir <- tempdir()
+    tmpfile <- file.path(tmpdir, html.file)
     cat(html.page, file = tmpfile, sep = "\n")
 
     markers <- c('marker-shadow.png', 'marker-icon-blue.png',
                  'marker-icon-orange.png', 'marker-icon-red.png',
                  'marker-icon-green.png')
     file.copy(file.path(.cdtDir$Root, 'images', markers),
-              file.path(tempdir(), markers), overwrite = TRUE)
+              file.path(tmpdir, markers),
+              overwrite = TRUE)
 
-    html.url <- sprintf("http://127.0.0.1:%s/custom/CDT/%s", port, basename(tmpfile))
-    if(interactive())
+    html.url <- paste0(.cdtEnv$cdtUrl, html.file)
+    if(interactive()){
         utils::browseURL(html.url)
-    else return(NULL)
+    }else{
+        return(NULL)
+    }
     invisible()
 }
