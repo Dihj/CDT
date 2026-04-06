@@ -38,9 +38,14 @@ era5.cds.download <- function(GalParams, nbfile = 1, GUI = TRUE, verbose = TRUE)
 
     time_request <- lapply(ymd, function(x){
         list(
-            year = format(x[1], "%Y"),
-            month = format(x[1], "%m"),
-            day = format(x[1], "%d"),
+            #year = format(x[1], "%Y"),
+            #month = format(x[1], "%m"),
+            #day = format(x[1], "%d"),
+            #time = format(x, "%H:%M")
+            year = list(format(x[1], "%Y")),
+            month = list(format(x[1], "%m")),
+            day = list(format(x[1], "%d")),
+           # time = as.list(format(x, "%H:%M"))
             time = format(x, "%H:%M")
         )
     })
