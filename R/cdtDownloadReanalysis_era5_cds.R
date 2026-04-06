@@ -80,7 +80,7 @@ era5.cds.download <- function(GalParams, nbfile = 1, GUI = TRUE, verbose = TRUE)
     request <- list(
         dataset_short_name = "reanalysis-era5-single-levels",
         product_type = 'reanalysis',
-        format = 'netcdf',
+        data_format = 'netcdf',
         download_format = 'unarchived',
         variable = opts$api_var,
         area = area
