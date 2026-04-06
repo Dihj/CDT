@@ -77,15 +77,23 @@ era5.cds.download <- function(GalParams, nbfile = 1, GUI = TRUE, verbose = TRUE)
                              var = uvar)
     }
 
+    #request <- list(
+    #    dataset_short_name = "reanalysis-era5-single-levels",
+    #    product_type = 'reanalysis',
+    #    data_format = 'netcdf',
+    #    download_format = 'unarchived',
+    #    variable = opts$api_var,
+    #    area = area
+    #)
     request <- list(
         dataset_short_name = "reanalysis-era5-single-levels",
-        product_type = 'reanalysis',
+        product_type = list('reanalysis'),
         data_format = 'netcdf',
         download_format = 'unarchived',
-        variable = opts$api_var,
-        area = area
+        variable = list(opts$api_var),
+        area = as.numeric(unlist(strsplit(area, "/")))
     )
-
+    
     api_url <- "https://cds.climate.copernicus.eu/api"
     api_endpoints <- file.path(api_url, "retrieve/v1/processes", request$dataset_short_name, "execute")
 
