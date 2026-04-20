@@ -55,7 +55,8 @@ cdtBiasCorrectPrecipCMD <- function(time.step = "dekadal",
                                     GUI = FALSE)
 {
     cdtLocalConfigData()
-    xml.dlg <- file.path(.cdtDir$dirLocal, "languages", "cdtPrecip_BiasCorrect_dlgBox.xml")
+   # xml.dlg <- file.path(.cdtDir$dirLocal, "languages", "cdtPrecip_BiasCorrect_dlgBox.xml") #cdtBias_Correction_ClimData_dlgBox.xml
+    xml.dlg <- file.path(.cdtDir$dirLocal, "languages", "cdtBias_Correction_ClimData_dlgBox.xml")
     lang.dlg <- cdtLanguageParse(xml.dlg, .cdtData$Config$lang.iso)
     message <- lang.dlg[['message']]
 
